@@ -31,4 +31,18 @@ class TodoListController extends Controller
        return TodoList::findOrFail($id);
 
     }
+
+    public function update(Request $request, TodoList $list)
+    {
+      $request->validate([
+        'name'=> ['required']
+      ]);
+       $list->update($request->all());
+       return response($list,HttpFoundationResponse::HTTP_OK);
+    }
+
+    public function destroy(TodoList $list){
+      $list->delete();
+      return response('',HttpFoundationResponse::HTTP_NO_CONTENT);
+    }
 }
