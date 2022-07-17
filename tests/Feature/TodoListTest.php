@@ -9,7 +9,7 @@ use function PHPUnit\Framework\assertEquals;
 class TodoListTest extends TestCase
 {
 
-    //private $list;
+    private $list;
     public function setUp(): void
     {
         parent::setUp();
@@ -22,15 +22,13 @@ class TodoListTest extends TestCase
      */
     public function test_fetch_todo_lists()
     {
-        $response = $this->getJson(route('todo-list.list'));
+        $response = $this->getJson(route('todo-list.index'));
         $response->assertStatus(200);
         assertEquals(1, count($response->json()));
     }
 
     public function test_fetch_single_todo_list(){
-      //  TodoList::factory()->create(['name'=>'Goto Umar Nana Bari']);
-
-        $response = $this->getJson(route('todo-list.show', 1));
+        $response = $this->getJson(route('todo-list.show', $this->list->id));
         $response->assertOk();
         assertEquals('Goto Umar Nana Bari', $response->json()['name']);
     }
@@ -56,7 +54,7 @@ class TodoListTest extends TestCase
     }
 
     public function test_update_todo_list(){
-        $response = $this->patchJson(route('todo-list.update',$this->list->id),['name'=>'Updated todo Title'])
+        $this->patchJson(route('todo-list.update',$this->list->id),['name'=>'Updated todo Title'])
         ->assertOk()
         ->json();
         $this->assertDatabaseHas('todo_lists',['name'=>'Updated todo Title']);
@@ -68,4 +66,5 @@ class TodoListTest extends TestCase
         ->assertNoContent();
         $this->assertDatabaseMissing('todo_lists', ['name'=>$this->list->name]);
     }
+
 }
